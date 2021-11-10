@@ -4,7 +4,7 @@ import 'package:oauth_token_manager/oauth_token_manager.dart';
 
 void main()async {
   var tokenManager = TokenManager(
-    consumerKey: 'consumerKey', consumerSecret: 'consumerSecret', tokenUrl: 'http://127.0.0.1'
+    consumerKey: 'consumerKey', consumerSecret: 'consumerSecret', authUrl: 'http://127.0.0.1'
   );
   try{
     await tokenManager.fetchToken(GrantType.client_credentials);

@@ -15,29 +15,35 @@ class TokenManager {
   DateTime? expiresAt;
   List<String> scopes = [];
 
-  String? authUrl;
-  String tokenUrl;
+  String authUrl;
   String? callbackUrl;
 
   factory TokenManager({
-    String? label,
+    String? tag,
     required String consumerKey, required String consumerSecret, 
-    required String tokenUrl, String? authUrl, String? callbackUrl, 
+    required String authUrl, String? callbackUrl, 
     List<String> scopes = const[]
   }){
-    String name = label ?? consumerKey;
+    String name = tag ?? consumerKey;
     if(_cache[name] == null) {
       _cache[name] = TokenManager._internal(
         consumerKey: consumerKey, consumerSecret: consumerSecret, scopes: scopes,
-        tokenUrl: tokenUrl, authUrl: authUrl, callbackUrl: callbackUrl
+        authUrl: authUrl, callbackUrl: callbackUrl
       ); 
     }
     return _cache[name]!;
   }
+  factory TokenManager.find(String tag){
+    return _cache[tag]!;
+  }
+
+  static void delete(String tag){
+    _cache.remove(tag);
+  }
 
   TokenManager._internal({
-    required this.consumerKey, required this.consumerSecret, required this.tokenUrl, this.scopes = const[], 
-    this.authUrl, this.callbackUrl
+    required this.consumerKey, required this.consumerSecret, required this.authUrl, this.scopes = const[], 
+    this.callbackUrl
   });
 
   bool get isNotExpired{
@@ -93,7 +99,7 @@ class TokenManager {
 
     // send request
     try {
-      final http.Response _res = await oauth2Request(tokenUrl, headers, body, encoding);
+      final http.Response _res = await oauth2Request(authUrl, headers, body, encoding);
       switch (_res.statusCode) {
         // sucess
         case 200:
